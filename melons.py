@@ -1,6 +1,7 @@
 """Classes for melon orders."""
 
 from random import randint
+import datetime as dt
 
 
 class AbstractMelonOrder(object):
@@ -12,11 +13,17 @@ class AbstractMelonOrder(object):
         self.species = species
         self.qty = qty
         self.shipped = False
+        self.order_time = dt.datetime.today()
 
     def get_base_price(self):
         """Sets base price for melon order."""
 
-        return randint(5, 9)
+        base_price = randint(5, 9)
+
+        if (8 <= self.order_time.hour < 11 and dt.datetime.weekday(self.order_time) <= 4):
+            base_price += 4
+
+        return base_price
 
     def get_total(self):
         """Calculate price, including tax."""
@@ -75,12 +82,7 @@ class GovernmentMelonOrder(AbstractMelonOrder):
 
     order_type = "government"
     tax = 0
-
-    def __init__(self, species, qty):
-        """Initialize melon order attributes."""
-
-        super(GovernmentMelonOrder, self).__init__(species, qty)
-        self.passed_inspection = False
+    passed_inspection = False
 
     def mark_inspection(self, passed):
         """Updates the attribute passed_inspection"""
